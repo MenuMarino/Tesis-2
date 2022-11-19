@@ -1,3 +1,0 @@
-[submodule "datasets/sketch_simplification"]
-	path = datasets/sketch_simplification
-	url = git@github.com:Xu-Justin/sketch_simplification.git
