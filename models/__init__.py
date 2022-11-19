@@ -46,12 +46,12 @@ class DeepFaceDrawing(nn.Module):
         if self.CE: self.CE.save(self.get_path(path, 'CE'))
         if self.FM: self.FM.save(self.get_path(path, 'FM'))
         if self.IS: self.IS.save(self.get_path(path, 'IS'))
-        # if self.IS2: self.IS2.save(self.get_path(path, 'IS2'))
+        if self.IS2: self.IS2.save(self.get_path(path, 'IS2'))
         if self.MN: raise NotImplementedError
     
     def load(self, path, map_location=torch.device('cpu')):
         if self.CE: self.CE.load(self.get_path(path, 'CE'), map_location=map_location)
         if self.FM: self.FM.load(self.get_path(path, 'FM'), map_location=map_location)
         if self.IS: self.IS.load(self.get_path(path, 'IS'), map_location=map_location)
-        # if self.IS2: self.IS2.load(self.get_path(path, 'IS2'), map_location=map_location)
+        if self.IS2: self.IS2.load(self.get_path(path, 'IS2'), map_location=map_location)
         if self.MN: raise NotImplementedError
