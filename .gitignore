@@ -1,0 +1,7 @@
+*.ipynb_checkpoints*
+*__pycache__*
+*.pth
+Dataset/*
+!Dataset/dataset.ipynb
+!Dataset/simplify.sh
+!Dataset/download_from_kaggle.sh
