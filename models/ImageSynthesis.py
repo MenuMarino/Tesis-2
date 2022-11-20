@@ -69,7 +69,7 @@ class Module(nn.Module):
         self.D2 = None
         self.D3 = None
         
-        self.dimension = 512
+        self.dimension = 256
         self.spatial_channel = s_channel
         
         if generator:

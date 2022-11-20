@@ -87,7 +87,7 @@ class Base(nn.Module):
 
 class Master(Base):
     def __init__(self, part, prefix, encoder=True, decoder=True):
-        self.master_dimension = 512
+        self.master_dimension = 256
         self.latent_dimension = 512
         self.part = part
         self.prefix = prefix
