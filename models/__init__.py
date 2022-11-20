@@ -30,13 +30,14 @@ class DeepFaceDrawing(nn.Module):
         x = self.FM.decode(x)
         x = self.FM.merge(x)
         x = self.IS.generate(x)
-        # x = self.IS2.generate(x)
+        x = self.IS2.generate(x)
         return x
     
     path_dict = {
         'CE' : 'CE',
         'FM' : 'FM',
-        'IS' : 'IS'
+        'IS' : 'IS',
+        'IS2': 'IS2'
     }
     
     def get_path(self, path, key):
