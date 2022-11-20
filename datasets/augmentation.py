@@ -7,7 +7,7 @@ def random_affine(images, p=1):
         translate=(0.05, 0.05),
         scale_ranges=(0.95, 1.05),
         shears=(-10, 10),
-        img_size=(256, 256)   
+        img_size=(512, 512)   
     )
 
     def transform(image):

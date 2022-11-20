@@ -19,11 +19,11 @@ class Base(nn.Module):
             self.delete_encoder()
 
     def init_encoder(self):
-        self.encoder_channels = [1, 32, 64, 128, 256]
+        self.encoder_channels = [1, 32, 64, 128, 256, 512]
         self.encoder = autoencoder.Encoder(self.encoder_channels, self.dimension, self.latent_dimension)
         
     def init_decoder(self):
-        self.decoder_channels = [256, 256, 128, 64, 64, self.spatial_channel]
+        self.decoder_channels = [512, 256, 256, 128, 64, 64, self.spatial_channel]
         self.decoder = autoencoder.Decoder(self.decoder_channels, self.encoder.conv_dimension, self.dimension, self.latent_dimension)
 
     def delete_encoder(self):

@@ -47,7 +47,7 @@ class Discriminator(nn.Module):
         for i in range(avgpool):
             self.pool.append(nn.AvgPool2d(kernel_size=4, stride=2, padding=1))
             
-        self.dis_channels = [self.spatial_channel + 3, 64, 128, 256]
+        self.dis_channels = [self.spatial_channel + 3, 64, 128, 256, 512]
         self.dis = nn.ModuleList()
         for i in range(1, len(self.dis_channels)):
             self.dis.append(block.Conv2D(self.dis_channels[i-1], self.dis_channels[i]))
@@ -69,7 +69,7 @@ class Module(nn.Module):
         self.D2 = None
         self.D3 = None
         
-        self.dimension = 256
+        self.dimension = 512
         self.spatial_channel = s_channel
         
         if generator:
