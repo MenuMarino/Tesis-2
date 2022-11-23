@@ -72,8 +72,15 @@ def main(args):
         }
         
         model.train()
-        for sketches in tqdm(train_dataloader, desc=f'Epoch - {epoch+1} / {args.epochs}'):
-            
+        print(f'Epoca {epoch}')
+
+        sketch_no = 1
+
+        for sketches in train_dataloader:
+            if (sketch_no % 500 == 0):
+                print(f'Sketch numero: {sketch_no} / 13277')
+            sketch_no += 1
+
             iteration_loss = {
                 'loss_left_eye_it' : 0,
                 'loss_right_eye_it' : 0,
@@ -102,6 +109,8 @@ def main(args):
                 experiment.log_metrics(iteration_loss)
         
         if args.dataset_validation:
+            print(f'Validacion epoca {epoch}')
+
             validation_running_loss = {
                 'val_loss_left_eye' : 0,
                 'val_loss_right_eye' : 0,
@@ -112,7 +121,7 @@ def main(args):
             
             model.eval()
             with torch.no_grad():
-                for sketches in tqdm(validation_dataloader, desc=f'Validation Epoch - {epoch+1} / {args.epochs}'):
+                for sketches in validation_dataloader:
                     
                     validation_iteration_loss = {
                         'val_loss_left_eye_it' : 0,
