@@ -13,7 +13,7 @@ export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:100
 python3 train_stage_1.py \
     --dataset person-face-sketches/train/ \
     --dataset_validation person-face-sketches/val/ \
-    --batch_size 1 \
-    --epochs 10 \
+    --batch_size 2 \
+    --epochs 20 \
     --output weight/weight/DeepFaceDrawing/ \
     --device cuda
