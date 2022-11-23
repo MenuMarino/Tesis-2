@@ -46,7 +46,7 @@ def main(args):
     model = models.DeepFaceDrawing(
         CE=True, CE_encoder=True, CE_decoder=False,
         FM=True, FM_decoder=True,
-        IS=True, IS_generator=True, IS_discriminator=True,
+        IS=True, IS_generator=True, IS_discriminator=True, IS2=True,
         manifold=False
     )
     
@@ -71,8 +71,8 @@ def main(args):
 
     optimizer_generator = torch.optim.Adam( list(model.FM.parameters()) + list(model.IS.G.parameters()) , lr=0.0002, betas=(0.5, 0.999))
     optimizer_discriminator = torch.optim.Adam( list(model.IS.D1.parameters()) + list(model.IS.D2.parameters()) + list(model.IS.D3.parameters()) , lr=0.0002, betas=(0.5, 0.999))
-    optimizer_generator2 = torch.optim.Adam( list(model.FM.parameters()) + list(model.IS.G.parameters()) , lr=0.0002, betas=(0.5, 0.999))
-    optimizer_discriminator2 = torch.optim.Adam( list(model.IS.D1.parameters()) + list(model.IS.D2.parameters()) + list(model.IS.D3.parameters()) , lr=0.0002, betas=(0.5, 0.999))
+    optimizer_generator2 = torch.optim.Adam( list(model.FM.parameters()) + list(model.IS2.G.parameters()) , lr=0.0002, betas=(0.5, 0.999))
+    optimizer_discriminator2 = torch.optim.Adam( list(model.IS2.D1.parameters()) + list(model.IS2.D2.parameters()) + list(model.IS2.D3.parameters()) , lr=0.0002, betas=(0.5, 0.999))
     
     l1 = losses.L1()
     bce = losses.BCE()
@@ -80,8 +80,8 @@ def main(args):
 
     label_real = model.IS.label_real
     label_fake = model.IS.label_fake
-    label_real2 = model.IS.label_real
-    label_fake2 = model.IS.label_fake
+    label_real2 = model.IS2.label_real
+    label_fake2 = model.IS2.label_fake
     
     for epoch in range(args.epochs):
         
@@ -184,11 +184,29 @@ def main(args):
                     loss_D_real = torch.tensor([bce.compute(patch, torch.full(patch.shape, label_real, dtype=torch.float).to(device)) for patch in patches], dtype=torch.float).sum()
                     loss_D = loss_D_fake + loss_D_real
                     
+                    # Nuevo
+                    fake_photos2 = model.IS2.generate(fake_photos)
+
+                    loss_G2_L1 = l1.compute(fake_photos2, photos)
+                    loss_perceptual = perceptual.compute(fake_photos2, photos)
+                    patches = model.IS2.discriminate(fake_photos, fake_photos2)
+                    loss_G2_BCE = torch.tensor([bce.compute(patch, torch.full(patch.shape, label_real2, dtype=torch.float).to(device)) for patch in patches], dtype=torch.float).sum()
+                    loss_G2 = loss_perceptual + 10 * loss_G2_L1 + loss_G2_BCE
+
+                    patches = model.IS2.discriminate(spatial_map.detach(), fake_photos.detach())
+                    loss_D2_fake = torch.tensor([bce.compute(patch, torch.full(patch.shape, label_fake2, dtype=torch.float).to(device)) for patch in patches], dtype=torch.float).sum()
+                    patches = model.IS2.discriminate(spatial_map.detach(), photos.detach())
+                    loss_D2_real = torch.tensor([bce.compute(patch, torch.full(patch.shape, label_real2, dtype=torch.float).to(device)) for patch in patches], dtype=torch.float).sum()
+                    loss_D2 = loss_D2_fake + loss_D2_real
+
+
                     validation_iteration_loss = {
                         'val_loss_G_it' : loss_G.item(),
-                        'val_loss_D_it' : loss_D.item()
+                        'val_loss_D_it' : loss_D.item(),
+                        'val_loss_G2_it' : loss_G2.item(),
+                        'val_loss_D2_it' : loss_D2.item()
                     }
-                    
+
                     for key, loss in iteration_loss.items():
                         validation_running_loss[key[:-3]] = loss * len(sketches) / len(validation_dataloader.dataset)
                     
