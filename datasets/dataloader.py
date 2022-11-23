@@ -46,6 +46,7 @@ simplificator = None
 
 def load_one_sketch(path, augmentation=False, simplify=False, device='cpu'):
     sketch = Image.open(path)
+    sketch = sketch.resize((256, 256))
     # if simplify:
     #     global simplificator
     #     # if not simplificator: simplificator = sketch_simplification.sketch_simplification(device=device)

@@ -19,11 +19,11 @@ class Base(nn.Module):
             self.init_decoder()
     
     def init_encoder(self):
-        self.encoder_channels = [1, 32, 64, 128, 256, 512]
+        self.encoder_channels = [1, 32, 64, 128, 256]
         self.encoder = autoencoder.Encoder(self.encoder_channels, self.dimension, self.latent_dimension)
 
     def init_decoder(self):
-        self.decoder_channels = [512, 256, 128, 64, 32, 32, 1]
+        self.decoder_channels = [256, 128, 64, 32, 32, 1]
         self.decoder = autoencoder.Decoder(self.decoder_channels, self.encoder.conv_dimension, self.dimension, self.latent_dimension)
     
     def delete_encoder(self):
@@ -88,7 +88,7 @@ class Base(nn.Module):
 class Master(Base):
     def __init__(self, part, prefix, encoder=True, decoder=True):
         self.master_dimension = 256
-        self.latent_dimension = 512
+        self.latent_dimension = 256
         self.part = part
         self.prefix = prefix
         self.crop_dimension = (part[0], part[1], part[0] + part[2], part[1] + part[2]) # xmin, ymin, xmax, ymax

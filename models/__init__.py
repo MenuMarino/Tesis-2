@@ -30,7 +30,7 @@ class DeepFaceDrawing(nn.Module):
         x = self.FM.decode(x)
         x = self.FM.merge(x)
         x = self.IS.generate(x)
-        x = self.IS2.generate(x)
+        if self.IS2: x = self.IS2.generate(x)
         return x
     
     path_dict = {
