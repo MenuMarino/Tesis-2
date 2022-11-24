@@ -10,8 +10,8 @@ module load python/3.9.2
 export PATH=/usr/local/cuda-11.4/targets/x86_64-linux/lib:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda-11.4/lib64:$LD_LIBRARY_PATH
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:100
-python3 web.py \
-    --weight weight/weight/DeepFaceDrawing/ \
-    --device cuda \
-    --host 0.0.0.0 \
-    --port 8000
+python3 inference.py \
+	--weight weight/weight/DeepFaceDrawing/ \
+	--image person-face-sketches/test/sketches/620.jpg \
+	--output output.jpg \
+	--device cuda
