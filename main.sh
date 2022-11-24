@@ -12,6 +12,6 @@ export LD_LIBRARY_PATH=/usr/local/cuda-11.4/lib64:$LD_LIBRARY_PATH
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:100
 python3 inference.py \
 	--weight weight/weight/DeepFaceDrawing/ \
-	--image person-face-sketches/test/sketches/4105.jpg \
+	--image person-face-sketches/test/sketches/13.jpg \
 	--output output2.jpg \
 	--device cuda
