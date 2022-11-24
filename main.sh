@@ -13,5 +13,5 @@ export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:100
 python3 inference.py \
 	--weight weight/weight/DeepFaceDrawing/ \
 	--image person-face-sketches/test/sketches/620.jpg \
-	--output output.jpg \
+	--output output2.jpg \
 	--device cuda
