@@ -109,7 +109,7 @@ def main(args):
             loss_G_BCE = torch.tensor([bce.compute(patch, torch.full(patch.shape, label_real, dtype=torch.float, requires_grad=True).to(device)) for patch in patches], dtype=torch.float, requires_grad=True).sum()
             loss_G = loss_perceptual + 10 * loss_G_L1 + loss_G_BCE
             loss_G.backward(retain_graph=True)
-            #optimizer_generator.step()
+            optimizer_generator.step()
             
             optimizer_discriminator.zero_grad()
             patches = model.IS.discriminate(spatial_map.detach(), fake_photos.detach())
@@ -118,7 +118,7 @@ def main(args):
             loss_D_real = torch.tensor([bce.compute(patch, torch.full(patch.shape, label_real, dtype=torch.float, requires_grad=True).to(device)) for patch in patches], dtype=torch.float, requires_grad=True).sum()
             loss_D = loss_D_fake + loss_D_real
             loss_D.backward(retain_graph=True)
-            #optimizer_discriminator.step()
+            optimizer_discriminator.step()
             
             # Nuevo
             fake_photos2 = model.IS2.generate(fake_photos)
@@ -129,7 +129,7 @@ def main(args):
             loss_G2_BCE = torch.tensor([bce.compute(patch, torch.full(patch.shape, label_real2, dtype=torch.float, requires_grad=True).to(device)) for patch in patches], dtype=torch.float, requires_grad=True).sum()
             loss_G2 = loss_perceptual + 10 * loss_G2_L1 + loss_G2_BCE
             loss_G2.backward()
-            optimizer_generator.step()
+            # optimizer_generator.step()
             optimizer_generator2.step()
             
             optimizer_discriminator2.zero_grad()
@@ -139,7 +139,7 @@ def main(args):
             loss_D2_real = torch.tensor([bce.compute(patch, torch.full(patch.shape, label_real2, dtype=torch.float, requires_grad=True).to(device)) for patch in patches], dtype=torch.float, requires_grad=True).sum()
             loss_D2 = loss_D2_fake + loss_D2_real
             loss_D2.backward()
-            optimizer_discriminator.step()
+            # optimizer_discriminator.step()
             optimizer_discriminator2.step()
             #(loss_G + loss_G2).backward()
             #(loss_D + loss_D2).backward()
@@ -206,10 +206,10 @@ def main(args):
                         'val_loss_G_it' : loss_G.item(),
                         'val_loss_D_it' : loss_D.item(),
                         'val_loss_G2_it' : loss_G2.item(), 
-			'val_loss_D2_it' : loss_D2.item()
-		    }
+                        'val_loss_D2_it' : loss_D2.item()
+                    }
                     
-                    for key, loss in iteration_loss.items():
+                    for key, loss in validation_iteration_loss.items():
                         validation_running_loss[key[:-3]] = loss * len(sketches) / len(validation_dataloader.dataset)
                     
                     if args.comet:
