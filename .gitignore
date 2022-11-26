@@ -1,6 +1,6 @@
 *.ipynb_checkpoints*
+.out
 *.pth
-*.out
 Dataset/*
 !Dataset/dataset.ipynb
 !Dataset/simplify.sh

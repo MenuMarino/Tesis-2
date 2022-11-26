@@ -1,6 +1,7 @@
 import torch
 import datasets, models, losses, utils
 from tqdm import tqdm
+torch.autograd.set_detect_anomaly(True)
 
 def get_args_parser():
     import argparse
@@ -101,7 +102,8 @@ def main(args):
             latents = model.CE.encode(model.CE.crop(sketches))
             spatial_map = model.FM.merge(model.FM.decode(latents))
             fake_photos = model.IS.generate(spatial_map)
-            
+            fake_photos_clone = fake_photos.detach().clone()           
+ 
             optimizer_generator.zero_grad()
             loss_G_L1 = l1.compute(fake_photos, photos)
             loss_perceptual = perceptual.compute(fake_photos, photos)
@@ -114,18 +116,18 @@ def main(args):
             optimizer_discriminator.zero_grad()
             patches = model.IS.discriminate(spatial_map.detach(), fake_photos.detach())
             loss_D_fake = torch.tensor([bce.compute(patch, torch.full(patch.shape, label_fake, dtype=torch.float, requires_grad=True).to(device)) for patch in patches], dtype=torch.float, requires_grad=True).sum()
-            patches = model.IS.discriminate(spatial_map.detach(), photos.detach())
+            patches = model.IS.discriminate(spatial_map.detach(), photos)
             loss_D_real = torch.tensor([bce.compute(patch, torch.full(patch.shape, label_real, dtype=torch.float, requires_grad=True).to(device)) for patch in patches], dtype=torch.float, requires_grad=True).sum()
             loss_D = loss_D_fake + loss_D_real
             loss_D.backward(retain_graph=True)
             optimizer_discriminator.step()
             
             # Nuevo
-            fake_photos2 = model.IS2.generate(fake_photos)
+            fake_photos2 = model.IS2.generate(fake_photos_clone)
             optimizer_generator2.zero_grad()
             loss_G2_L1 = l1.compute(fake_photos2, photos)
             loss_perceptual = perceptual.compute(fake_photos2, photos)
-            patches = model.IS2.discriminate(fake_photos, fake_photos2)
+            patches = model.IS2.discriminate(fake_photos_clone, fake_photos2)
             loss_G2_BCE = torch.tensor([bce.compute(patch, torch.full(patch.shape, label_real2, dtype=torch.float, requires_grad=True).to(device)) for patch in patches], dtype=torch.float, requires_grad=True).sum()
             loss_G2 = loss_perceptual + 10 * loss_G2_L1 + loss_G2_BCE
             loss_G2.backward()
@@ -133,9 +135,9 @@ def main(args):
             optimizer_generator2.step()
             
             optimizer_discriminator2.zero_grad()
-            patches = model.IS2.discriminate(fake_photos.detach(), fake_photos2.detach())
+            patches = model.IS2.discriminate(fake_photos_clone.detach(), fake_photos2.detach())
             loss_D2_fake = torch.tensor([bce.compute(patch, torch.full(patch.shape, label_fake2, dtype=torch.float, requires_grad=True).to(device)) for patch in patches], dtype=torch.float, requires_grad=True).sum()
-            patches = model.IS2.discriminate(fake_photos.detach(), photos.detach())
+            patches = model.IS2.discriminate(fake_photos_clone.detach(), photos.detach())
             loss_D2_real = torch.tensor([bce.compute(patch, torch.full(patch.shape, label_real2, dtype=torch.float, requires_grad=True).to(device)) for patch in patches], dtype=torch.float, requires_grad=True).sum()
             loss_D2 = loss_D2_fake + loss_D2_real
             loss_D2.backward()
